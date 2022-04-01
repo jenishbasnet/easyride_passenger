@@ -14,6 +14,7 @@ import '../requests/baseurl.dart';
 class Profile extends StatelessWidget {
   static String? emailHolder;
   static String? passwordHolder;
+  late String Jenish;
 
   @override
   Widget build(BuildContext context) {
