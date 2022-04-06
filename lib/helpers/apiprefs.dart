@@ -1,6 +1,8 @@
 import 'dart:convert';
-import '../Model/user_details.dart';
-import 'package:http/http.dart';
+import 'package:easyride_app/Model/travel_details.dart';
+import 'package:http/http.dart' as http;
+
+import '../requests/baseurl.dart';
 
 // class APIRef{
 
@@ -13,44 +15,25 @@ final String baseUrl = "http://192.168.1.100:8000";
 
 
 String user_id = '';
-
-
-Future getHostelData(String email, password) async
+Future getTravelHistory() async
 {
-  var response = await post(
-        Uri.parse('$baseUrl/api/passenger/login/'),
-        body: {
-          'email' : email,
-          'password' : password
-        }
-      );
-      print(response.body);
-
-  
-  
+  var response = await http.get(Uri.parse('${BaseUrl.baseurl}api/passenger/travelhistory/'),headers:{'Cookie':'sessionid=hp2gwxyvrb7ymwbngw4k4t8zcmgac4rt; expires=Wed, 20 Apr 2022 17:55:08 GMT; HttpOnly; Max-Age=1209600; Path=/; SameSite=Lax'});
+  print(response.body.toString());
   var jsonData = json.decode(response.body);
-  List<UserDetail> hostels = [];
+  List<PassengerTravel> travel = [];
 
-  if(response.statusCode == 200){
-    for (var h in jsonData){
-      UserDetail details = UserDetail(
-        h[0]['UserDetails']['email'],
-        h[0]['UserDetails']['password'],
-        h[0]['userID'],
-        h[0]['username'],
-        h[0]['phoneNumber'], 
-        h[0]['profilePhoto'],
-      );
-      hostels.add(details);
-    }
-    print(hostels);
-
-    return hostels;
-    
-
-  }else{
-    print('failed');
+  for (var h in jsonData)
+  {
+    PassengerTravel details = PassengerTravel(
+      h["source_address"].toString(),
+      h["destination_address"].toString(), 
+      h["booked_time"].toString(), 
+      h["username"].toString(),
+    ); 
+    travel.add(details);
   }
+  print(jsonData);
+  return travel;
 }
   
 //  void login(String email , password) async {

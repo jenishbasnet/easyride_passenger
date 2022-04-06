@@ -21,6 +21,7 @@ class _LogInPageState extends State<LogInPage> {
   UserModel usermodel = UserModel();
 
   bool circular = true;
+  String ? cookies;
 
   
   
@@ -33,8 +34,13 @@ class _LogInPageState extends State<LogInPage> {
         }
     
     );
+    print(res.statusCode);
+    print(res.headers.toString());
     var r = json.decode(res.body);
     if (res.statusCode == 200){
+      cookies = res.headers['set-cookie'];
+      print(cookies);
+
       Navigator.push(
           context,
           MaterialPageRoute( 
@@ -148,7 +154,6 @@ class _LogInPageState extends State<LogInPage> {
                         onPressed: () 
                         {
                           getData();
-                          // getHostelData(emailController.text.toString(), passwordController.text.toString());
                           // Navigator.push(
                           //     context,
                           //     MaterialPageRoute(
