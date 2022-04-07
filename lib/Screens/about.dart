@@ -55,11 +55,12 @@ class _AboutState extends State<About> {
             const SizedBox(
               height: 10,
             ),
+            buildTravelHistory(context, "Travel History"),
             buildAccountOptionRow(context, "Rules and Regulation"),
             buildReportScreen(context, "Report Rider"),
             buildAccountOptionRow(context, "Social"),
             buildAccountOptionRow(context, "Guide for the application"),
-            buildTravelHistory(context, "Privacy and security"),
+            
             const SizedBox(
               height: 20,
             ),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:easyride_app/Model/travel_details.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import '../requests/baseurl.dart';
 
@@ -17,7 +18,7 @@ final String baseUrl = "http://192.168.1.100:8000";
 String user_id = '';
 Future getTravelHistory() async
 {
-  var response = await http.get(Uri.parse('${BaseUrl.baseurl}api/passenger/travelhistory/'),headers:{'Cookie':'sessionid=hp2gwxyvrb7ymwbngw4k4t8zcmgac4rt; expires=Wed, 20 Apr 2022 17:55:08 GMT; HttpOnly; Max-Age=1209600; Path=/; SameSite=Lax'});
+  var response = await http.get(Uri.parse('${BaseUrl.baseurl}api/passenger/travelhistory/'),headers:{'Cookie':'${CookieSession.cookiesession}'});
   print(response.body.toString());
   var jsonData = json.decode(response.body);
   List<PassengerTravel> travel = [];
@@ -32,7 +33,7 @@ Future getTravelHistory() async
     ); 
     travel.add(details);
   }
-  print(jsonData);
+  // print(jsonData);
   return travel;
 }
   

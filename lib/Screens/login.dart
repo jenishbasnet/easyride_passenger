@@ -38,7 +38,7 @@ class _LogInPageState extends State<LogInPage> {
     print(res.headers.toString());
     var r = json.decode(res.body);
     if (res.statusCode == 200){
-      cookies = res.headers['set-cookie'];
+      CookieSession.cookiesession = res.headers['set-cookie'];
       print(cookies);
 
       Navigator.push(
