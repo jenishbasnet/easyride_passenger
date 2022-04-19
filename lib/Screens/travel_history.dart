@@ -32,9 +32,12 @@ double longitude2;
 
 String dest;
 
-List<String> destinationad = ['a' , 'B', 'C', 'D','a' , 'B', 'C', 'D','a' , 'B', 'C', 'D','a' , 'B', 'C', 'D','a' , 'B', 'C', 'D','a' , 'B', 'C', 'D','a' , 'B', 'C', 'D','a' , 'B', 'C', 'D','a' , 'B', 'C', 'D','a' , 'B', 'C', 'D','a' , 'B', 'C', 'D','a' , 'B', 'C', 'D'];
+// var destinationad = List(200);
+// var soorad = List(200);
 
-List<String> soorad = ['a' , 'B', 'C', 'D','a' , 'B', 'C', 'D','a' , 'B', 'C', 'D','a' , 'B', 'C', 'D','a' , 'B', 'C', 'D','a' , 'B', 'C', 'D','a' , 'B', 'C', 'D','a' , 'B', 'C', 'D','a' , 'B', 'C', 'D','a' , 'B', 'C', 'D','a' , 'B', 'C', 'D','a' , 'B', 'C', 'D'];
+List<String> destinationad = ['LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...'];
+
+List<String> soorad = ['LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...','LOADING...'];
 
   void convert(source_ad){
     String a = source_ad;
@@ -258,12 +261,34 @@ List<String> soorad = ['a' , 'B', 'C', 'D','a' , 'B', 'C', 'D','a' , 'B', 'C', '
                                           ],
                                         ),
                                       ),
-                                      
-                                      Row(children: [
+                                       Padding(
+                                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                        child: Row
+                                        (
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: 
+                                          [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                              children: [
                                         Text("Destination : ", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-                                        Text(destinationad[i], style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold))]),
+                                        Text(destinationad[i], style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold))
+                                                
+                                              ],
+                                            ),
+                                               
+                                          ],
+                                        ),
+                                      ),
+                                      
+                                      // Row(
+                                        
+                                      //   MainAxisAlignment: MainAxisAlignment.spaceBetween;
+                                      //   children: [
+                                      //   Text("Destination : ", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                                      //   Text(destinationad[i], style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold))]),
                                        SizedBox(
-                                         height: 20,
+                                         height: 15,
                                        ), 
                                       Text
                                       (

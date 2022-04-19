@@ -154,11 +154,11 @@ class _LogInPageState extends State<LogInPage> {
                         onPressed: () 
                         {
                           getData();
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
                                 
-                          //         builder: (context) => cusNav()));
+                                  builder: (context) => cusNav()));
                         },
                         color: const Color(0xff0095FF),
                         elevation: 0,
