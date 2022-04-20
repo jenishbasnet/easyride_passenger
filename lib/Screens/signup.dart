@@ -6,8 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:mailer/smtp_server/gmail.dart';
 
 import '../requests/baseurl.dart';
+import 'dart:math' as math;
+import 'package:mailer/mailer.dart';
+
+import 'otp_screen.dart';
+
+
 
 bool emailValid = true;
 bool samePassword = true;
@@ -22,6 +29,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  bool userValid = false;
   TextEditingController emailController = TextEditingController();
 
   TextEditingController passwordController = TextEditingController();
@@ -31,34 +39,64 @@ class _SignUpPageState extends State<SignUpPage> {
   
   TextEditingController confirmPasswordController = TextEditingController();
 
-void signUpUser() async {
-    var response = await http.post(Uri.parse('${BaseUrl.baseurl}api/passenger/addUser/'), 
-    body: {'username': usernameController.text, 'email': emailController.text, 'password': passwordController.text});
-    var jsonData = json.decode(response.body);
-    if(response.statusCode == 201)
-    {
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog
-        (
-          title: Text("Success"),
-          content: Text("User signed up!"),
-          actions: <Widget>
-          [
-            FlatButton
-            (
-              onPressed: () 
-              {                
-              Navigator.push(context,
-              MaterialPageRoute(builder: (context) => LogInPage()));
-              },
-              child: Text("ok"),
-            ),
-          ],
-        ),
-      );
+  var otp;
+  String? finalOTP;
+
+    void otpGenerator () 
+  {
+    var rnd = math.Random();
+    otp = rnd.nextDouble() * 1000000;
+    while (otp < 100000) {
+      otp *= 10;
     }
   }
+
+   sendOTP() async 
+  {
+    otpGenerator();
+    String email = "noreply.easyride@gmail.com";
+    String password = 'punknotdead20';
+
+    final smtpServer = gmail(email, password);
+
+    final message = Message()
+      ..from = Address(email, "noreply.easyride@gmail.com")
+      ..recipients.add(emailController.text)
+      ..subject = "Verify email address"
+      ..text = "Your OTP is: ${otp.toString().substring(0, otp.toString().indexOf('.'))}";
+
+    try 
+    {
+      finalOTP = otp.toString().substring(0, otp.toString().indexOf('.')).toString();
+      final sendReport = await send(message, smtpServer);
+      setState(() {
+        userValid = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar
+      (
+        const SnackBar
+        (
+          content: Text('Sent and OTP to your email.\nPlease verify your email address!'),
+        )
+      );
+      ConfirmationPage.otp = finalOTP;
+      ConfirmationPage.username = usernameController.text;
+      ConfirmationPage.userEmail = emailController.text;
+      ConfirmationPage.userPassword = passwordController.text;
+      Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ConfirmationPage()));
+    } 
+    on MailerException catch (e) {
+      print('Message not sent.');
+      for (var p in e.problems) {
+        print('Problem: ${p.code}: ${p.msg}');
+      }
+    }
+  }
+
+
 
 
   // bool validate = false;
@@ -150,7 +188,7 @@ void signUpUser() async {
                 child: MaterialButton(
                   minWidth: double.infinity,
                   height: 60,
-                  onPressed: () {
+                  onPressed: userValid ? () {} : ()  {
                     setState(() {
                     emailController.text.isEmpty ? emailvalidate = true : emailvalidate = false;
                     checkEmail();
@@ -167,7 +205,12 @@ void signUpUser() async {
                           {
                             if (samePassword)
                             {
-                              signUpUser();
+                              // signUpUser();
+                              sendOTP();
+                              setState(() {
+                                userValid = true;
+                              });
+
 
                             }
                           }
@@ -192,7 +235,9 @@ void signUpUser() async {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50),
                   ),
-                  child: const Text(
+                  child: userValid 
+                      ? const SizedBox(height: 15, width: 15, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2, ))
+                      :  Text(
                     "Sign up",
                     style: TextStyle(
                       fontWeight: FontWeight.w600,

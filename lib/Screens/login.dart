@@ -37,9 +37,15 @@ class _LogInPageState extends State<LogInPage> {
     print(res.statusCode);
     print(res.headers.toString());
     var r = json.decode(res.body);
+    var jsondata = json.decode(res.body);
+
+
     if (res.statusCode == 200){
       CookieSession.cookiesession = res.headers['set-cookie'];
       print(cookies);
+      loggedusername = jsondata["username"].toString();
+      loggedemail = jsondata["email"].toString();
+
 
       Navigator.push(
           context,

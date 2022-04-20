@@ -1,3 +1,5 @@
+import 'package:easyride_app/Screens/customer_care.dart';
+import 'package:easyride_app/Screens/feedback.dart';
 import 'package:easyride_app/Screens/travel_history.dart';
 import 'package:easyride_app/helpers/apiprefs.dart';
 import 'package:easyride_app/main.dart';
@@ -56,9 +58,9 @@ class _AboutState extends State<About> {
               height: 10,
             ),
             buildTravelHistory(context, "Travel History"),
-            buildAccountOptionRow(context, "Rules and Regulation"),
+            buildCustomer(context, "Customer Care Support"),
             buildReportScreen(context, "Report Rider"),
-            buildAccountOptionRow(context, "Social"),
+            buildFeedback(context, "Feedback and Bug Reports"),
             buildAccountOptionRow(context, "Guide for the application"),
             
             const SizedBox(
@@ -334,6 +336,11 @@ class _AboutState extends State<About> {
 
 
 
+
+
+
+
+
   GestureDetector buildTravelHistory(BuildContext context, String title) {
     return GestureDetector(
       onTap: () {
@@ -365,3 +372,66 @@ class _AboutState extends State<About> {
     );
     
   }
+
+GestureDetector buildFeedback(BuildContext context, String title) {
+    return GestureDetector(
+      onTap: () {
+         Navigator.push(
+          context,
+          MaterialPageRoute( 
+          builder: (context) => FeedbackPage()));
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[600],
+              ),
+            ),
+            const Icon(
+              Icons.arrow_forward_ios,
+              color: Colors.grey,
+            ),
+          ],
+        ),
+      ),
+    );
+}
+
+
+GestureDetector buildCustomer(BuildContext context, String title) {
+    return GestureDetector(
+      onTap: () {
+         Navigator.push(
+          context,
+          MaterialPageRoute( 
+          builder: (context) => CustomerCarePage()));
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[600],
+              ),
+            ),
+            const Icon(
+              Icons.arrow_forward_ios,
+              color: Colors.grey,
+            ),
+          ],
+        ),
+      ),
+    );
+}

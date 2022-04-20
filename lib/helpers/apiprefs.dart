@@ -9,6 +9,10 @@ import '../requests/baseurl.dart';
 
 final String baseUrl = "http://192.168.1.100:8000";
 
+String ? loggedusername; 
+String ? loggedemail;
+
+
 
 
 //UserDetail userDetail = UserDetail(email: '', password: '', userid: '', username: '', phoneNumber: '', profilephoto: '');
