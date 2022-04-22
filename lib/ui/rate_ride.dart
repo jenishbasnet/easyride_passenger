@@ -9,6 +9,7 @@ class RateRide extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
         body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       Text('Rate your ride', style: Theme.of(context).textTheme.headline4),
       Padding(
@@ -35,6 +36,13 @@ class RateRide extends StatelessWidget {
           onPressed: () => Navigator.push(
               context, MaterialPageRoute(builder: (_) => const Home())),
           child: const Text('Start another ride'))
-    ]));
+    ]), floatingActionButton: FloatingActionButton(
+      
+      backgroundColor: Colors.green,
+      elevation: 12,
+      onPressed: () {
+        
+        },),
+    );
   }
 }

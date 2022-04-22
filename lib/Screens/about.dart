@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:easyride_app/Screens/customer_care.dart';
 import 'package:easyride_app/Screens/feedback.dart';
 import 'package:easyride_app/Screens/travel_history.dart';
@@ -5,6 +7,12 @@ import 'package:easyride_app/helpers/apiprefs.dart';
 import 'package:easyride_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:http/http.dart' as http;
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
+
+import '../requests/baseurl.dart';
 
 class About extends StatefulWidget {
   const About({Key? key}) : super(key: key);
@@ -18,8 +26,71 @@ class _AboutState extends State<About> {
   bool accountActivity = true;
   bool rideAlert = true;
   bool location = true;
+  bool userValid = false;
+  bool emptyValid = false;
+
   final usernameController = TextEditingController();
   final descriptionController = TextEditingController();
+  final emergencyNumController = TextEditingController();
+  final emergencyNumControl = TextEditingController();
+
+  bool feedbackSent = false;
+  String mainEmail = "noreply.easyride@gmail.com";
+
+  void getUserEmails() async {
+    try {
+      var response =
+          await http.get(Uri.parse('${BaseUrl.baseurl}api/rider/userDetails/'));
+      var jsonData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        for (var user in jsonData) {
+          if (user["username"] == usernameController.text) {
+            print(user["username"]);
+            userValid = true;
+          }
+        }
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Not connected to the internet!'),
+      ));
+    }
+  }
+
+  void checkFeedback() {
+    if (descriptionController.text == "") {
+      descriptionController.text = "No feedback";
+    }
+  }
+
+  sendFeedback() async {
+    String email = "feedback.easyride@gmail.com";
+    String password = 'easyride20';
+
+    final smtpServer = gmail(email, password);
+
+    final message = Message()
+      ..from = Address(email, mainEmail)
+      ..recipients.add(mainEmail)
+      ..subject = "User feedback"
+      ..text =
+          "Submitted by: $loggedusername \nEmail: $loggedemail\nReported rider: ${usernameController.text}\nMessage: ${descriptionController.text}";
+
+    try {
+      final sendReport = await send(message, smtpServer);
+      setState(() {
+       feedbackSent = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Thank you, the user has been reported!'),
+      ));
+    } on MailerException catch (e) {
+      print('Message not sent.');
+      for (var p in e.problems) {
+        print('Problem: ${p.code}: ${p.msg}');
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,8 +132,7 @@ class _AboutState extends State<About> {
             buildCustomer(context, "Customer Care Support"),
             buildReportScreen(context, "Report Rider"),
             buildFeedback(context, "Feedback and Bug Reports"),
-            buildAccountOptionRow(context, "Guide for the application"),
-            
+            buildEmergencyScreen(context, "Add Emergency Number"),
             const SizedBox(
               height: 20,
             ),
@@ -190,13 +260,13 @@ class _AboutState extends State<About> {
                     borderRadius: BorderRadius.circular(20)),
                 onPressed: () {
                   Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                  builder: (BuildContext context) {
-                  return HomePage();
-                },
-                ),
-                (_) => false,
-                );
+                    MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return HomePage();
+                      },
+                    ),
+                    (_) => false,
+                  );
                   // Navigator.push(context,
                   //     MaterialPageRoute(builder: (context) => HomePage()));
                 },
@@ -258,7 +328,6 @@ class _AboutState extends State<About> {
         ),
       ),
     );
-    
   }
 
   GestureDetector buildReportScreen(BuildContext context, String title) {
@@ -268,44 +337,96 @@ class _AboutState extends State<About> {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text("Report a rider",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 26,
-                        color: Colors.blue,
-                        ),
+                title: Text(
+                  "Report a rider",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 26,
+                    color: Colors.blue,
+                  ),
                 ),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text("Username of the rider", style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
-                    ),),
+                    Text(
+                      "Username of the rider",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
+                    ),
                     TextField(
                       controller: usernameController,
+                      decoration: InputDecoration(
+                          contentPadding:
+                              EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                          // errorText:  emptyValid== false? userValid? null : 'Invalid email!' : 'Email cannot be empty!',
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                          ),
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey))),
                     ),
                     SizedBox(
                       height: 20,
+                    ),
+                    Text(
+                      "Description",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
                       ),
-                    Text("Description", style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
-                    ),),
+                    ),
                     TextField(
                       controller: descriptionController,
                     ),
-
-                    
                   ],
                 ),
                 actions: [
                   FlatButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text("Close")),
+                      color: Colors.red,
+                      textColor: Colors.white,
+                      onPressed: feedbackSent
+                          ? () {}
+                          : () {
+                            
+                              // userValid = false;
+                              // setState(() {
+                              // usernameController.text.isEmpty ? emptyValid = false : emptyValid = false;
+                              getUserEmails();
+                              // });
+                              // if (emptyValid == false){
+                              if (userValid == true) {
+                                print('validated');
+                                userValid = false;
+                                checkFeedback();
+                                sendFeedback();
+                                setState(() {
+                                  feedbackSent = true;
+                                });
+                                Navigator.of(context).pop();
+                                
+                              } else {
+                                print('object');
+                                showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("⚠ Error! Invalid username⚠", style: TextStyle(color: Colors.redAccent),),);});
+                
+                                
+                              }
+                            },
+                      child: feedbackSent
+                          ? const SizedBox(
+                              height: 15,
+                              width: 15,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ))
+                          : const Text("Report")),
                 ],
               );
             });
@@ -331,23 +452,89 @@ class _AboutState extends State<About> {
         ),
       ),
     );
-}
-}
+  }
 
-
-
-
-
-
-
+  GestureDetector buildEmergencyScreen(BuildContext context, String title) {
+    return GestureDetector(
+      onTap: () {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text(
+                  "Emergency number",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Colors.green,
+                  ),
+                ),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Provide Emergency Number",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    IntlPhoneField(
+                      controller: emergencyNumControl,
+                      showCountryFlag: false,
+                      decoration: const InputDecoration(
+                          labelText: "Phone number",
+                          hintText: "Enter your phone number"),
+                      initialCountryCode: 'NP',
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                  ],
+                ),
+                actions: [
+                  FlatButton(
+                      color: Colors.green,
+                      textColor: Colors.white,
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text("Add Number")),
+                ],
+              );
+            });
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[600],
+              ),
+            ),
+            const Icon(
+              Icons.arrow_forward_ios,
+              color: Colors.grey,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   GestureDetector buildTravelHistory(BuildContext context, String title) {
     return GestureDetector(
       onTap: () {
         getTravelHistory();
-        
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => TravelHistory()));
+
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => TravelHistory()));
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -370,16 +557,13 @@ class _AboutState extends State<About> {
         ),
       ),
     );
-    
   }
 
-GestureDetector buildFeedback(BuildContext context, String title) {
+  GestureDetector buildFeedback(BuildContext context, String title) {
     return GestureDetector(
       onTap: () {
-         Navigator.push(
-          context,
-          MaterialPageRoute( 
-          builder: (context) => FeedbackPage()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => FeedbackPage()));
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -402,16 +586,13 @@ GestureDetector buildFeedback(BuildContext context, String title) {
         ),
       ),
     );
-}
+  }
 
-
-GestureDetector buildCustomer(BuildContext context, String title) {
+  GestureDetector buildCustomer(BuildContext context, String title) {
     return GestureDetector(
       onTap: () {
-         Navigator.push(
-          context,
-          MaterialPageRoute( 
-          builder: (context) => CustomerCarePage()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => CustomerCarePage()));
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -434,4 +615,5 @@ GestureDetector buildCustomer(BuildContext context, String title) {
         ),
       ),
     );
+  }
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:easyride_app/Screens/prepare_ride.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart';
@@ -108,6 +109,10 @@ class _ReviewRideState extends State<ReviewRide> {
             (
               onPressed: () 
               {
+                Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const PrepareRide()));
                 Navigator.of(ctx).pop();
               },
               child: Text("ok"),
