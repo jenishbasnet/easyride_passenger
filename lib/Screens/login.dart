@@ -45,6 +45,8 @@ class _LogInPageState extends State<LogInPage> {
       print(cookies);
       loggedusername = jsondata["username"].toString();
       loggedemail = jsondata["email"].toString();
+      loggeduserid = jsondata["userID"].toString();
+
 
 
       Navigator.push(

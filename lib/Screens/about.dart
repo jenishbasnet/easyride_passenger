@@ -29,13 +29,13 @@ class _AboutState extends State<About> {
   bool userValid = false;
   bool emptyValid = false;
 
-  final usernameController = TextEditingController();
-  final descriptionController = TextEditingController();
-  final emergencyNumController = TextEditingController();
-  final emergencyNumControl = TextEditingController();
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  // TextEditingController emergencyNumController = TextEditingController();
+  TextEditingController emergencyNumControl = TextEditingController();
 
   bool feedbackSent = false;
-  String mainEmail = "noreply.easyride@gmail.com";
+  String mainEmail = "feedback.easyride@gmail.com";
 
   void getUserEmails() async {
     try {
@@ -57,6 +57,27 @@ class _AboutState extends State<About> {
     }
   }
 
+  void emergency() async {
+    try {
+      print(loggeduserid);
+      var response =
+          await http.put(Uri.parse("${BaseUrl.baseurl}api/passenger/em/$loggeduserid/"),
+        body: {
+          'priorityNumber' : emergencyNumControl.text,
+          'email': loggedemail
+          
+        });
+      var jsonData = json.decode(response.body);
+      print (jsonData);
+      number = emergencyNumControl.text;
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Not connected to the internet!'),
+      ));
+    }
+  }
+
   void checkFeedback() {
     if (descriptionController.text == "") {
       descriptionController.text = "No feedback";
@@ -64,15 +85,15 @@ class _AboutState extends State<About> {
   }
 
   sendFeedback() async {
-    String email = "feedback.easyride@gmail.com";
-    String password = 'easyride20';
+    String email = "noreply.easyride@gmail.com";
+    String password = 'punknotdead20';
 
     final smtpServer = gmail(email, password);
 
     final message = Message()
       ..from = Address(email, mainEmail)
       ..recipients.add(mainEmail)
-      ..subject = "User feedback"
+      ..subject = "${usernameController.text} has been reported (Rider)"
       ..text =
           "Submitted by: $loggedusername \nEmail: $loggedemail\nReported rider: ${usernameController.text}\nMessage: ${descriptionController.text}";
 
@@ -498,6 +519,7 @@ class _AboutState extends State<About> {
                       color: Colors.green,
                       textColor: Colors.white,
                       onPressed: () {
+                        emergency();
                         Navigator.of(context).pop();
                       },
                       child: const Text("Add Number")),

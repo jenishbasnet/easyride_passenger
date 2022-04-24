@@ -11,6 +11,8 @@ final String baseUrl = "http://192.168.1.100:8000";
 
 String ? loggedusername; 
 String ? loggedemail;
+String ? loggeduserid;
+String ? number;
 
 
 
