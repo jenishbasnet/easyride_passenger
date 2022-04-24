@@ -7,6 +7,7 @@ import 'package:easyride_app/Screens/navigation.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 import '../Model/user_model.dart';
 import '../requests/baseurl.dart';
@@ -45,6 +46,33 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   String? emailHolder = Profile.emailHolder;
   String? passwordHolder= Profile.passwordHolder;
+
+  void updateUser() async 
+  {
+    try
+    {
+      var userResponse = await http.put(Uri.parse('${BaseUrl.baseurl}api/passenger/update_profile/$loggeduserid/'), body: {'username': usernameController.text, 'email': emailController.text, 'password': passwordController.text, 'phoneNumber':phonenumberController.text,});
+      var userJsonData = json.decode(userResponse.body);
+      
+      if(userResponse.statusCode == 200)
+      {
+        loggedemail = emailController.text;
+        loggedusername = usernameController.text;
+        ScaffoldMessenger.of(context).showSnackBar
+        (
+          const SnackBar
+          (
+            content: Text('Profile updated!'),
+          )
+        );
+      }
+    }
+    catch(e)
+    {
+      print("no internet");
+    }
+    
+  }
 
 
   Future<File?> imgpicker(ImageSource source) async {
@@ -165,7 +193,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
               buildTextField("User Name", "", false, usernameController ),
               buildTextField("E-mail", "", false, emailController),
               buildTextField("Password", "********", true, passwordController),
-              buildTextField("Phone Number", "", false, phonenumberController),
+              IntlPhoneField(
+                      controller: phonenumberController,
+                      showCountryFlag: false,
+                      decoration: const InputDecoration(
+                          labelText: "Phone number",
+                          hintText: "Enter your phone number"),
+                      initialCountryCode: 'NP',
+                    ),
               SizedBox(
                 height: 5,
               ),
@@ -187,18 +222,28 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ),
                   RaisedButton(
                     onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          actions: [
-                            SpinKitFadingCircle(
-                              color: Colors.lightBlue,
-                              size: 200,
-                              duration: Duration(milliseconds: 3000),
-                            ),
-                          ],
-                        ),
-                      );
+                      updateUser();
+                      
+        
+        setState(() {
+          Profile.emailHolder = emailController.text;
+        Profile.passwordHolder = passwordController.text;
+          
+        });
+                      
+                      // showDialog(
+                      //   context: context,
+                      //   builder: (context) => AlertDialog(
+                          
+                      //     actions: [
+                      //       // SpinKitFadingCircle(
+                      //       //   color: Colors.lightBlue,
+                      //       //   size: 200,
+                      //       //   duration: Duration(milliseconds: 3000),
+                      //       // ),
+                      //     ],
+                      //   ),
+                      // );
                     },
                     color: Colors.green,
                     padding: EdgeInsets.symmetric(horizontal: 50),
