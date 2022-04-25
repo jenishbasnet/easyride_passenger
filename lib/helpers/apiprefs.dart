@@ -3,6 +3,7 @@ import 'package:easyride_app/Model/travel_details.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
+import '../Model/notification_model.dart';
 import '../requests/baseurl.dart';
 
 // class APIRef{
@@ -13,6 +14,7 @@ String ? loggedusername;
 String ? loggedemail;
 String ? loggeduserid;
 String ? number;
+List<Notifications> notifications = [];
 
 
 
@@ -42,7 +44,41 @@ Future getTravelHistory() async
   // print(jsonData);
   return travel;
 }
-  
+
+Future getUserNotifications() async
+{
+  try
+  {
+    var notificationResponse = await http.get(Uri.parse('${BaseUrl.baseurl}api/passenger/userNotifications/?userID=$loggeduserid'), headers: {'Cookie': '${CookieSession.cookiesession}'});
+    var notificationJsonData = json.decode(notificationResponse.body);
+    print(notificationResponse.toString());
+
+    notifications = [];
+
+    for (var n in notificationJsonData)
+    {
+      
+
+      Notifications userNotifications = Notifications
+      (
+        n["userID"],
+        n["other"],
+        n["notificationMessage"], 
+        n["notificationDate"],  
+
+      ); 
+      
+      notifications.add(userNotifications);
+    }
+    
+    return notifications;
+  }
+    
+  catch(e)
+  {
+    print("no internet");
+  }
+}
 //  void login(String email , password) async {
     
 //     try{

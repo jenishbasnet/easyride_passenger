@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:easyride_app/Screens/prepare_ride.dart';
+import 'package:easyride_app/Screens/pushnotification.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart';
@@ -9,6 +10,7 @@ import 'package:easyride_app/helpers/mapbox_handler.dart';
 import 'package:easyride_app/helpers/shared_prefs.dart';
 
 import '../Model/availableride_model.dart';
+import '../helpers/apiprefs.dart';
 import '../helpers/commons.dart';
 import '../requests/baseurl.dart';
 import '../widgets/review_ride_bottom_sheet.dart';
@@ -94,6 +96,9 @@ class _ReviewRideState extends State<ReviewRide> {
     phone =nc[0]['phoneNumber'];
     license =nc[0]['license'];
     bookRide();
+    bookingConfirmedNotification();
+    var notify = http.post(Uri.parse('${BaseUrl.baseurl}api/passenger/userNotifications/'), body: {'userID': loggeduserid, 'other': 'Booking confirmed', 'notificationMessage': "Booked a ride with $rider_name", 'notificationDate': "${DateTime.now()}"});
+
     
     print(rider_name+rider_email+phone+license);
     }catch(e){

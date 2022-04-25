@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'ui/splash.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 
 late SharedPreferences sharedPreferences;
 
@@ -34,6 +35,21 @@ late SharedPreferences sharedPreferences;
 
 
 void main() async{
+  AwesomeNotifications().initialize
+  (
+    null,
+    [
+      NotificationChannel
+      (
+        channelKey: 'basic_channel', 
+        channelName: 'Basic nootifications', 
+        defaultColor: Colors.cyan,
+        importance: NotificationImportance.High,
+        channelShowBadge: true, 
+        channelDescription: 'test notifications',
+      )
+    ],
+  );
   WidgetsFlutterBinding.ensureInitialized();
   sharedPreferences = await SharedPreferences.getInstance();
   await dotenv.load(fileName: "assests/config/.env");

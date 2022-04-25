@@ -21,6 +21,7 @@ environment:
   sdk: ">=2.16.0 <3.0.0"
 
 dependencies:
+  awesome_notifications: ^0.6.21
   cupertino_icons: ^1.0.2
   custom_navigator: ^0.3.0
   dio: ^4.0.4

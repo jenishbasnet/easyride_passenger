@@ -1,12 +1,30 @@
 import 'dart:async';
 
+import 'package:easyride_app/Screens/pushnotification.dart';
+import 'package:easyride_app/requests/baseurl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 
+import '../helpers/apiprefs.dart';
 import '../helpers/mapbox_handler.dart';
 import '../helpers/shared_prefs.dart';
 import '../Screens/review_ride.dart';
+import 'package:http/http.dart' as http;
+
+DateTime now = DateTime.now();
+  void saveNotification() async 
+  {
+    try
+    {
+      var response = await http.post(Uri.parse('${BaseUrl.baseurl}api/passenger/userNotifications/'), body: {'userID': loggeduserid, 'other': 'Ride Request', 'notificationMessage': "You have requested for a ride", 'notificationDate': "${DateTime.now()}"});
+    }   
+    catch(e)
+    {
+      print(e);
+    }
+  }
+
 
 Widget reviewRideFaButton(BuildContext context) {
   return FloatingActionButton.extended(
@@ -16,6 +34,8 @@ Widget reviewRideFaButton(BuildContext context) {
         LatLng destinationLatLng = getTripLatLngFromSharedPrefs('destination');
         Map modifiedResponse =
             await getDirectionsAPIResponse(sourceLatLng, destinationLatLng);
+        saveNotification();
+        rideConfirmedNotification();
 
         showDialog(
           context: context,
@@ -34,6 +54,7 @@ Widget reviewRideFaButton(BuildContext context) {
               ),
             ),
             actions: [
+              
               SpinKitFadingCircle(
                 color: Colors.lightBlue,
                 size: 200,

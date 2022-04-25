@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:easyride_app/Screens/about.dart';
+import 'package:easyride_app/Screens/pushnotification.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easyride_app/helpers/apiprefs.dart';
@@ -69,6 +70,7 @@ class _CustomerCarePageState extends State<CustomerCarePage> {
       ..text = "Submitted by: $loggedusername \nUsername: ${userNameController.text}\nEmail: ${emailController.text}\nSubject: ${subjectController.text}\nMessage: ${messageController.text}";
     try 
     {
+      tciketNotification();
       final sendReport = await send(message, smtpServer);
       setState(() {
         messageSent = false;

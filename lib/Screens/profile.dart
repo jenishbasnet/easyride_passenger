@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:easyride_app/Screens/home.dart';
+import 'package:easyride_app/Screens/pushnotification.dart';
 import 'package:easyride_app/helpers/apiprefs.dart';
 import 'package:flutter/material.dart';
 import 'package:easyride_app/Screens/navigation.dart';
@@ -72,6 +74,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
       print("no internet");
     }
     
+  }
+  DateTime now = DateTime.now();
+  void saveNotification() async 
+  {
+    try
+    {
+      var response = await http.post(Uri.parse('${BaseUrl.baseurl}api/passenger/userNotifications/'), body: {'userID': loggeduserid, 'other': 'profile updated', 'notificationMessage': "Your profile has been updated,", 'notificationDate': "${DateTime.now()}"});
+    }   
+    catch(e)
+    {
+      print(e);
+    }
   }
 
 
@@ -191,7 +205,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
               // buildTextField("emauk", "a", false, emailController),
               buildTextField("User Name", "", false, usernameController ),
-              buildTextField("E-mail", "", false, emailController),
+              buildEmailField("E-mail", "", false, emailController),
               buildTextField("Password", "********", true, passwordController),
               IntlPhoneField(
                       controller: phonenumberController,
@@ -212,7 +226,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20)),
                     onPressed: () {
-                      
+                      Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const Home()));
                     },
                     child: Text("CANCEL",
                         style: TextStyle(
@@ -223,6 +240,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   RaisedButton(
                     onPressed: () {
                       updateUser();
+                      saveNotification();
+                      profileNotification();
                       
         
         setState(() {
@@ -318,6 +337,42 @@ class _EditProfilePageState extends State<EditProfilePage> {
       onTap: function,
     );
   }
+  Widget buildEmailField(
+     label, placeholder, bool isPasswordTextField, controller) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 35.0),
+      child: TextField(
+        enabled: false,
+        controller: controller,
+        obscureText: isPasswordTextField ? showPassword : false,
+        decoration: InputDecoration(
+            suffixIcon: isPasswordTextField
+                ? IconButton(
+                    onPressed: () {
+                      setState(() {
+                        showPassword = !showPassword;
+                      });
+                    },
+                    icon: Icon(
+                      Icons.remove_red_eye,
+                      color: Colors.grey,
+                    ),
+                  )
+                : null,
+            contentPadding: EdgeInsets.only(bottom: 3),
+            labelText: label,
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: placeholder,
+            hintStyle: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            )),
+            ),
+    );
+  }
+
+  
 
   void bottomsheets(context) {
     showModalBottomSheet(

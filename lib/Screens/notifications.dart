@@ -1,152 +1,146 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:intl/intl.dart';
+
+import '../helpers/apiprefs.dart';
+
+class TimeAgo{
+  static String timeAgoSinceDate(String dateString, {bool numericDates = true}) {
+    DateTime notificationDate = DateFormat("dd-MM-yyyy hh:mm").parse(dateString);
+    final date2 = DateTime.now();
+    final difference = date2.difference(notificationDate);
+
+    print(difference.inDays);
+    if (difference.inDays > 8) {
+      return dateString;
+    } else if ((difference.inDays / 7).floor() >= 1) {
+      return (numericDates) ? '1 week ago' : 'Last week';
+    } else if (difference.inDays >= 2) {
+      return '${difference.inDays} days ago';
+    } else if (difference.inDays >= 1) {
+      return (numericDates) ? '1 day ago' : 'Yesterday';
+    } else if (difference.inHours >= 2) {
+      return '${difference.inHours} hours ago';
+    } else if (difference.inHours >= 1) {
+      return (numericDates) ? '1 hour ago' : 'An hour ago';
+    } else if (difference.inMinutes >= 2) {
+      return '${difference.inMinutes} minutes ago';
+    } else if (difference.inMinutes >= 1) {
+      return (numericDates) ? '1 minute ago' : 'A minute ago';
+    } else if (difference.inSeconds >= 3) {
+      return '${difference.inSeconds} seconds ago';
+    } else {
+      return 'Just now';
+    }
+  }
+
+} 
+
 
 class NotificationPage extends StatefulWidget {
-  const NotificationPage({ Key? key }) : super(key: key);
+  const NotificationPage({Key? key}) : super(key: key);
 
   @override
-  _NotificationPageState createState() => _NotificationPageState();
+  State<NotificationPage> createState() => _NotificationPageState();
 }
 
-class _NotificationPageState extends State<NotificationPage> {
+class _NotificationPageState extends State<NotificationPage> 
+{
+
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.only(left: 16, top: 25, right: 16),
-        child: ListView(
-          children: [const Text(
-              "Notifications",
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: const [
-                Icon(
-                  Icons.notifications,
-                  color: Colors.red,
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Text(
-                  "Earlier Notifications",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const Divider(
-              height: 15,
-              thickness: 2,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: const[
-                Icon(
-                  Icons.notifications,
-                  color: Colors.black,
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Expanded(
-                  child: Text(
-                  "The Ride has been sucesfully completed",
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                  ),
-                  ),
-                ),
-                
-
-            ],),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: const[
-                Icon(
-                  Icons.notifications,
-                  color: Colors.black,
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Expanded(
-                  child: Text(
-                  "The Ride has been started to the location Malah Nagar,Nepal",
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                  ),
-                  ),
-                ),
-
-            ],),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: const[
-                Icon(
-                  Icons.notifications,
-                  color: Colors.grey,
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Expanded(
-                  child: Text(
-                  "The Rider has reached the pickup location",
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 20,
-                  ),
-                  ),
-                ),
-
-            ],),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: const[
-                Icon(
-                  Icons.person,
-                  color: Colors.grey,
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Expanded(
-                  child: Text(
-                  "Rider: Himal Acharya has accepted your ride request.",
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 20,
-                  ),
-                  ),
-                ),
-
-            ],),
-            SizedBox(
-              height: 50,
-            ),
-            SpinKitThreeBounce(color: Colors.lightBlue,size: 50,duration: Duration(milliseconds: 3000),),
-
-            
-            ],
-        ),
+  Widget build(BuildContext context) 
+  {
+    return Scaffold
+    (
+      appBar: AppBar
+      (
+       
+        title: const Text("Notifications"),
+        centerTitle: true,
       ),
+      body: SingleChildScrollView(
+        child: Column
+        (
+          children: 
+          [
+            FutureBuilder
+            (
+              future: getUserNotifications(),
+              builder: (context, AsyncSnapshot snapshot) 
+              {
+                if(snapshot.data == null)
+                {
+                  return const SizedBox(height: 325, child: Center(child: CircularProgressIndicator()));
+                }
+                else
+                {
+                  return SingleChildScrollView
+                  (
+                    child: Row
+                    (
+                      children: 
+                      [
+                        Expanded
+                        (
+                          child: SizedBox
+                          (
+                            height: 750,
+                            width: 400,
+                            child: ListView.builder
+                            (
+                              itemCount: snapshot.data.length,
+                              itemBuilder: (context, i)
+                              {
+                                return SingleChildScrollView
+                                (
+                                  child: Padding
+                                  (
+                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                    child: SingleChildScrollView(
+                                      child: Column
+                                      (
+                                        children: 
+                                        [
+                                          SizedBox(height: 20,),
+                                          
+                                          
+                                          Row
+                                          (
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Icon(Icons.bookmark_added, size: 30,),
+                                              SizedBox
+                                              (
+                                                width: 200,
+                                                child: Text("${snapshot.data[i].notificationMessage} ${snapshot.data[i].other}", style: TextStyle(fontSize: 18),)
+                                              ),
+                                              Text(TimeAgo.timeAgoSinceDate(snapshot.data[i].notificationDate)),
+                                            ],
+                                          ),
+                                          const Padding
+                                          (
+                                            padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                                            child:  Divider(color: Colors.black54, thickness: 1)
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                );
+                              }
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              }
+            )
+          ],
+        ),
+      )
+      
     );
   }
 }
