@@ -1,4 +1,5 @@
 import 'package:easyride_app/Screens/profile.dart';
+import 'package:easyride_app/Screens/reset_email.dart';
 import 'package:flutter/material.dart';
 import 'package:easyride_app/Screens/navigation.dart';
 import 'package:easyride_app/Screens/signup.dart';
@@ -198,6 +199,25 @@ class _LogInPageState extends State<LogInPage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => SignUpPage()));
+                      },
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const Text("Forgot Password?"),
+                    InkWell(
+                      child: const Text("Reset",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                          )),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EnterEmailPage()));
                       },
                     ),
                   ],

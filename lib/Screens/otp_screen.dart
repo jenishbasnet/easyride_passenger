@@ -250,31 +250,11 @@ class _ConfirmationPageState extends State<ConfirmationPage>
                     (
                       "Haven't received a code yet?",
                     ),
-                    TextButton
-                    (
-                      onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LogInPage())),
-                      child: const Text
-                      (
-                        "Send again",
-                        style: TextStyle
-                        (
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black
-                        ),
-                      )
-                    )
+                    
                   ]               
                 ),
               ),
-              DropdownButton
-              (
-                value: _currentOption,
-                items: _dropDownMenuItems, 
-                onChanged: changedDropDownItem
-              )
+             
             ],
           ),
         ),
